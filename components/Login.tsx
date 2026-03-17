@@ -28,7 +28,10 @@ export default function Login() {
 
   const onSubmit = async (data: formData): Promise<void> => {
     try {
-      const res = await axios.post("http://localhost:4000/login", data);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/login`,
+        data,
+      );
       console.log("Server Response:", res.data);
       localStorage.setItem("token", res.data.token);
       router.push("/welcome");

@@ -24,7 +24,7 @@ const Welcome = () => {
       } else {
         try {
           const res = await axios.get<AuthMeResponse>(
-            "http://localhost:4000/auth/me",
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
             {
               headers: {
                 Authorization: `Bearer ${tokenfromLocal}`,
