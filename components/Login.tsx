@@ -34,7 +34,7 @@ export default function Login() {
       );
       console.log("Server Response:", res.data);
       localStorage.setItem("token", res.data.token);
-      router.push("/welcome");
+      router.push("/rooms");
     } catch (error) {
       console.error("Login Error:", error);
     }
