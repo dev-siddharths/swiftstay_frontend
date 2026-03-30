@@ -1,19 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Room, RoomBadgeVariant } from "./types";
-
-// const badgeStyles: Record<RoomBadgeVariant, string> = {
-//   primary:
-//     "bg-primary-container text-on-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-//   dark: "bg-on-surface/80 backdrop-blur-md text-surface-bright px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-//   tertiary:
-//     "bg-tertiary text-on-tertiary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-//   tertiaryLight:
-//     "bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-// };
+import type { Room } from "./types";
 
 const formatPrice = (price: number) =>
-  `₹${new Intl.NumberFormat("en-IN").format(price)}`;
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price);
 
 type RoomCardProps = {
   room: Room;

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type AuthMeResponse = {
   email: string;
   naam: string;
@@ -23,26 +25,29 @@ export default function RoomsHeader({ userData, logout }: Props) {
     <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm">
       <div className="flex justify-between items-center px-6 py-4 w-full max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <span className="text-primary font-headline font-extrabold tracking-tighter text-2xl">
+          <Link
+            href="/rooms"
+            className="text-primary font-headline font-extrabold tracking-tighter text-2xl"
+          >
             SwiftStay
-          </span>
+          </Link>
         </div>
         <nav className="hidden md:flex items-center space-x-8">
-          <a className="text-primary font-semibold text-sm" href="#">
+          <Link className="text-primary font-semibold text-sm" href="/rooms">
             Home
-          </a>
-          <a
+          </Link>
+          <Link
             className="text-on-surface font-semibold text-sm hover:opacity-80 transition-opacity"
-            href="#"
+            href="/bookings"
           >
             Bookings
-          </a>
-          <a
+          </Link>
+          <Link
             className="text-on-surface font-semibold text-sm hover:opacity-80 transition-opacity"
-            href="#"
+            href="/rooms"
           >
             Favorites
-          </a>
+          </Link>
         </nav>
         <div className="flex items-center gap-4">
           {/* <button

@@ -1,3 +1,5 @@
+import RoomDetailsPageClient from "@/components/room-details/RoomDetailsPageClient";
+
 type RoomDetailsPageProps = {
   params: Promise<{ id: string }>;
 };
@@ -7,5 +9,5 @@ export default async function RoomDetailsPage({
 }: RoomDetailsPageProps) {
   const { id } = await params;
 
-  return <>Hello {id}</>;
+  return <RoomDetailsPageClient roomId={id} />;
 }
