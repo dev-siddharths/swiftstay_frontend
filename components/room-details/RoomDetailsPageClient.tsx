@@ -186,7 +186,9 @@ export default function RoomDetailsPageClient({
           {errorMessage}
         </main>
       ) : null}
-      {!errorMessage && room ? <RoomDetailsScreen room={room} /> : null}
+      {!errorMessage && room ? (
+        <RoomDetailsScreen room={room} userId={userData.id} />
+      ) : null}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import type {
   CalendarDay,
   RoomAmenity,
   RoomDetailsInput,
+  RoomTimeSlot,
   RoomDetailsViewModel,
   RoomImage,
 } from "./roomDetails.types";
@@ -302,12 +303,15 @@ export function buildDefaultTimeSlots(basePrice: number): RoomTimeSlot[] {
 }
 
 export function buildTimeSlotsFromApi(
-  slots: Array<{ startTime: string; endTime: string }> | undefined,
+  slots:
+    | Array<{ id: number; startTime: string; endTime: string }>
+    | undefined,
   basePrice: number,
 ): RoomTimeSlot[] {
   if (slots && slots.length > 0) {
     return slots.map((slot, index) => ({
       id: buildSlotKey(slot.startTime, slot.endTime),
+      slotId: slot.id,
       time: `${formatSlotClock(slot.startTime)} - ${formatSlotClock(slot.endTime)}`,
       label: buildSlotLabel(slot.startTime, slot.endTime, index),
       price: basePrice,
@@ -317,10 +321,7 @@ export function buildTimeSlotsFromApi(
     }));
   }
 
-  return buildDefaultTimeSlots(basePrice).map((slot) => ({
-    ...slot,
-    disabled: true,
-  }));
+  return [];
 }
 
 export function getBookingBreakdown(basePrice: number) {

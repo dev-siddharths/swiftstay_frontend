@@ -7,6 +7,9 @@ type RoomBookingSidebarProps = {
   serviceFee: number;
   occupancyTaxes: number;
   total: number;
+  onBookNow: () => void | Promise<void>;
+  isBooking: boolean;
+  isBookDisabled: boolean;
 };
 
 export default function RoomBookingSidebar({
@@ -16,6 +19,9 @@ export default function RoomBookingSidebar({
   serviceFee,
   occupancyTaxes,
   total,
+  onBookNow,
+  isBooking,
+  isBookDisabled,
 }: RoomBookingSidebarProps) {
   return (
     <div className="sticky top-28 bg-surface-container-lowest rounded-2xl p-8 shadow-[0_8px_32px_rgba(27,28,28,0.08)] border border-outline-variant/10">
@@ -88,9 +94,13 @@ export default function RoomBookingSidebar({
 
       <button
         type="button"
-        className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all mb-4"
+        onClick={() => {
+          void onBookNow();
+        }}
+        disabled={isBookDisabled}
+        className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all mb-4 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
       >
-        Book Now
+        {isBooking ? "Booking..." : "Book Now"}
       </button>
       <p className="text-center text-xs text-on-surface-variant">
         You won&apos;t be charged yet

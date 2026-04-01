@@ -1,7 +1,8 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import RoomAmenities from "./RoomAmenities";
 import RoomBookingSection from "./RoomBookingSection";
 import RoomBookingSidebar from "./RoomBookingSidebar";
@@ -23,18 +24,28 @@ import RoomDetailsOverview from "./RoomDetailsOverview";
 
 type RoomDetailsScreenProps = {
   room: RoomDetailsInput;
+  userId: number;
 };
 
 type SlotsResponse = {
   success?: boolean;
   data?: Array<{
+    id: number;
     startTime: string;
     endTime: string;
   }>;
   message?: string;
 };
 
-export default function RoomDetailsScreen({ room }: RoomDetailsScreenProps) {
+type BookingResponse = {
+  success?: boolean;
+  message?: string;
+};
+
+export default function RoomDetailsScreen({
+  room,
+  userId,
+}: RoomDetailsScreenProps) {
   const details = buildRoomDetailsViewModel(room);
   const [today] = useState(() => new Date());
   const [calendarMonth, setCalendarMonth] = useState(
@@ -50,11 +61,14 @@ export default function RoomDetailsScreen({ room }: RoomDetailsScreenProps) {
   const [selectedSlotId, setSelectedSlotId] = useState(details.defaultSlotId);
   const [isLoadingSlots, setIsLoadingSlots] = useState(true);
   const [slotsError, setSlotsError] = useState<string | null>(null);
+  const [isBooking, setIsBooking] = useState(false);
 
-  useEffect(() => {
-    let ignore = false;
+  const fetchSlots = useCallback(
+    async (shouldIgnore?: () => boolean) => {
+      if (shouldIgnore?.()) {
+        return;
+      }
 
-    async function fetchSlots() {
       setIsLoadingSlots(true);
       setSlotsError(null);
 
@@ -78,7 +92,7 @@ export default function RoomDetailsScreen({ room }: RoomDetailsScreenProps) {
           },
         );
 
-        if (ignore) {
+        if (shouldIgnore?.()) {
           return;
         }
 
@@ -101,7 +115,7 @@ export default function RoomDetailsScreen({ room }: RoomDetailsScreenProps) {
           setSlotsError(response.data.message ?? "Failed to load slots");
         }
       } catch {
-        if (ignore) {
+        if (shouldIgnore?.()) {
           return;
         }
 
@@ -109,24 +123,83 @@ export default function RoomDetailsScreen({ room }: RoomDetailsScreenProps) {
         setSelectedSlotId("");
         setSlotsError("Failed to load slots");
       } finally {
-        if (!ignore) {
+        if (!shouldIgnore?.()) {
           setIsLoadingSlots(false);
         }
       }
-    }
+    },
+    [details.basePrice, room.id, selectedDate],
+  );
 
-    fetchSlots();
+  useEffect(() => {
+    let ignore = false;
+
+    void fetchSlots(() => ignore);
 
     return () => {
       ignore = true;
     };
-  }, [details.basePrice, room.id, selectedDate]);
+  }, [fetchSlots]);
 
   const calendarDays = buildMiniCalendar(calendarMonth, today);
   const selectedSlot =
     timeSlots.find((slot) => slot.id === selectedSlotId && !slot.disabled) ??
     null;
   const booking = getBookingBreakdown(selectedSlot?.price ?? details.basePrice);
+  const isBookDisabled =
+    isLoadingSlots || isBooking || !selectedSlot || !selectedSlot.slotId;
+
+  const handleBookNow = async () => {
+    if (!selectedSlot?.slotId) {
+      toast.error("Please select an available slot");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("Please login again to continue");
+      return;
+    }
+
+    setIsBooking(true);
+
+    try {
+      const payload = {
+        user_id: userId,
+        roomId: room.id,
+        slotId: selectedSlot.slotId,
+        date: formatApiDate(selectedDate),
+        final_price: booking.total,
+      };
+
+      const response = await axios.post<BookingResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/booking`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.data?.success) {
+        toast.success(response.data.message ?? "Booking successful");
+        return;
+      }
+
+      toast.error(response.data?.message ?? "Booking failed");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message ?? "Booking failed");
+      } else {
+        toast.error("Booking failed");
+      }
+    } finally {
+      await fetchSlots();
+      setIsBooking(false);
+    }
+  };
 
   const shiftMonth = (direction: number) => {
     const nextMonth = new Date(
@@ -197,6 +270,9 @@ export default function RoomDetailsScreen({ room }: RoomDetailsScreenProps) {
               serviceFee={booking.serviceFee}
               occupancyTaxes={booking.occupancyTaxes}
               total={booking.total}
+              onBookNow={handleBookNow}
+              isBooking={isBooking}
+              isBookDisabled={isBookDisabled}
             />
           </aside>
         </div>

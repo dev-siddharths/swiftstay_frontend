@@ -19,6 +19,7 @@ export interface CalendarDay {
 
 export interface RoomTimeSlot {
   id: string;
+  slotId?: number;
   time: string;
   label: string;
   price: number;

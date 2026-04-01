@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const useAuth = () => {
   type AuthMeResponse = {
+    id: number;
     email: string;
     naam: string;
     iat: number;

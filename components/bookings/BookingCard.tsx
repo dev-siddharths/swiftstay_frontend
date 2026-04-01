@@ -111,7 +111,7 @@ export default function BookingCard({ booking }: BookingCardProps) {
               </div>
             </div>
 
-            <div className="mt-7 grid gap-4 rounded-[24px] border border-outline-variant/15 bg-surface/60 p-5 md:grid-cols-4">
+            <div className="mt-7 grid gap-4 rounded-[24px] border border-outline-variant/15 bg-surface/60 p-5 md:grid-cols-3">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant/60">
                   Stay Dates
@@ -136,14 +136,6 @@ export default function BookingCard({ booking }: BookingCardProps) {
                   {booking.guestLabel}
                 </p>
               </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant/60">
-                  Stay Type
-                </p>
-                <p className="mt-2 text-sm font-bold text-on-surface">
-                  {booking.stayType}
-                </p>
-              </div>
             </div>
           </div>
 
@@ -162,16 +154,18 @@ export default function BookingCard({ booking }: BookingCardProps) {
                   {booking.secondaryActionLabel}
                 </button>
               ) : null}
-              <button
-                type="button"
-                className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-transform active:scale-95 ${
-                  booking.status === "cancelled"
-                    ? "bg-surface-container-high text-on-surface"
-                    : "bg-primary text-on-primary"
-                }`}
-              >
-                {booking.actionLabel}
-              </button>
+              {booking.actionLabel ? (
+                <button
+                  type="button"
+                  className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-transform active:scale-95 ${
+                    booking.status === "cancelled"
+                      ? "bg-surface-container-high text-on-surface"
+                      : "bg-primary text-on-primary"
+                  }`}
+                >
+                  {booking.actionLabel}
+                </button>
+              ) : null}
             </div>
           </div>
         </div>

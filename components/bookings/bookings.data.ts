@@ -20,7 +20,6 @@ export const BOOKING_MOCK_DATA: BookingRecord[] = [
     guestLabel: "2 Adults",
     stayType: "Executive Suite",
     dateISO: "2026-04-12T14:00:00.000Z",
-    actionLabel: "View itinerary",
     secondaryActionLabel: "Cancel booking",
   },
   {

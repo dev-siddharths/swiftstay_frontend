@@ -116,6 +116,10 @@ export default function RoomBookingSection({
             <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low p-4 text-sm text-on-surface-variant">
               {slotsError}
             </div>
+          ) : timeSlots.length === 0 ? (
+            <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low p-4 text-sm text-on-surface-variant">
+              Sorry, no slots available. We are fully booked.
+            </div>
           ) : (
             <div className="grid grid-cols-1 gap-3">
               {timeSlots.map((slot) => {

@@ -12,7 +12,7 @@ export type BookingRecord = {
   guestLabel: string;
   stayType: string;
   dateISO: string;
-  actionLabel: string;
+  actionLabel?: string;
   secondaryActionLabel?: string;
 };
 
