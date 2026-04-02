@@ -174,7 +174,7 @@ export default function RoomDetailsScreen({
       };
 
       const response = await axios.post<BookingResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking`,
+        `${process.env.NEXT_PUBLIC_API_URL}/booking/createBooking`,
         payload,
         {
           headers: {
@@ -228,8 +228,6 @@ export default function RoomDetailsScreen({
             <RoomDetailsOverview
               title={details.title}
               location={details.location}
-              rating={details.rating}
-              reviewCount={details.reviewCount}
               introHeading={details.introHeading}
               introParagraphs={details.introParagraphs}
             />

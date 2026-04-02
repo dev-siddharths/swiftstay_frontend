@@ -15,8 +15,8 @@ type RoomCardProps = {
 
 export default function RoomCard({ room }: RoomCardProps) {
   return (
-    <article className="group bg-surface-container-lowest rounded-3xl overflow-hidden hover:shadow-[0_20px_50px_rgba(169,50,0,0.1)] transition-all duration-500 flex flex-col">
-      <div className="relative h-72 overflow-hidden">
+    <article className="group flex flex-col overflow-hidden rounded-[24px] bg-surface-container-lowest transition-all duration-500 hover:shadow-[0_16px_36px_rgba(169,50,0,0.1)]">
+      <div className="relative h-48 overflow-hidden">
         <Image
           src={room.image_url}
           alt={room.title}
@@ -48,9 +48,9 @@ export default function RoomCard({ room }: RoomCardProps) {
           </span>
         </button> */}
       </div>
-      <div className="p-6 flex flex-col">
-        <div className="flex justify-between items-start mb-2 gap-4">
-          <h3 className="font-headline text-xl font-bold text-on-surface">
+      <div className="flex flex-col p-4">
+        <div className="mb-1 flex items-start justify-between gap-3">
+          <h3 className="font-headline text-[1.1rem] font-semibold leading-snug text-on-surface">
             {room.title}
           </h3>
           {/* {room.rating ? (
@@ -68,22 +68,22 @@ export default function RoomCard({ room }: RoomCardProps) {
           ) : null} */}
         </div>
         {room.location ? (
-          <p className="text-on-surface-variant text-sm flex items-center gap-1 mb-4">
+          <p className="mb-2.5 text-[13px] font-medium text-on-surface-variant/80">
             {room.location}
           </p>
         ) : null}
-        <div className="pt-6 flex items-center justify-between border-t border-surface-container-high">
-          <div className="flex flex-col">
-            <span className="text-xs text-on-surface-variant font-medium">
+        <div className="flex items-end justify-between border-t border-surface-container-high pt-3">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/75">
               Per night
             </span>
-            <span className="text-xl font-headline font-extrabold text-primary">
+            <span className="font-headline text-[1.05rem] font-bold text-primary">
               {formatPrice(room.price)}
             </span>
           </div>
           <Link
             href={`/rooms/${room.id}`}
-            className="px-6 py-2.5 bg-primary text-on-primary font-bold rounded-xl hover:bg-primary-container active:scale-95 transition-all text-sm"
+            className="rounded-lg bg-primary px-3.5 py-1.5 text-[14px] font-medium text-on-primary transition-all hover:bg-primary-container active:scale-95"
           >
             View Details
           </Link>

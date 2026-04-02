@@ -51,13 +51,6 @@ const SLOT_DEFINITIONS = [
   },
 ] as const;
 
-const DEFAULT_LOCATION = "Goa, India \u2014 Near Candolim Beach";
-
-const DEFAULT_DESCRIPTION = [
-  "Perched high above the Arabian Sea, the Deluxe Ocean View Suite offers a curated escape that blends contemporary luxury with the soulful rhythm of Goa. Every detail is designed for the modern traveler, from the hand-selected linens to the floor-to-ceiling glass that frames the shifting tides.",
-  "Wake up to the sound of crashing waves and enjoy a slow morning on your private terrace. Whether you're here for a creative retreat or a romantic getaway, the suite provides a seamless transition between indoor comfort and the wild beauty of the coastline.",
-];
-
 const DEFAULT_IMAGES: RoomImage[] = [
   {
     src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBATZGxGUINC7I3HwJtf03Koi62bDAJDx0rF_GGwf1wU-8g_zQpTbHslx7kwF2ZNG6vnCYmyj8qYh5iRt6h_QksHrK2qs0Xt9knYU9wepW2AdIFFsQOO4BiTKIg_wSH14XU5EpDcsz4VoHKdc8AvfaSBhVs5i3UbAqlb-Ggtz3jClW3I4FmWAX8aLq88RMVMCDXia-FRa0WGDr4eK5P-IMsjYRCfAxfaLfJK3wlrh2ilRynclErJHdTmWIfyDtQPBHB9AveFsCyFqU",
@@ -110,11 +103,7 @@ function getIntroParagraphs(description?: string): string[] {
     .filter(Boolean);
 
   if (!paragraphs || paragraphs.length === 0) {
-    return DEFAULT_DESCRIPTION;
-  }
-
-  if (paragraphs.length === 1) {
-    return [paragraphs[0], DEFAULT_DESCRIPTION[1]];
+    return [];
   }
 
   return paragraphs.slice(0, 2);
@@ -152,8 +141,8 @@ export function getFallbackRoom(roomId: string): RoomDetailsInput {
     title: "Deluxe Ocean View Suite",
     price: 1200,
     image_url: DEFAULT_IMAGES[0].src,
-    description: DEFAULT_DESCRIPTION.join("\n\n"),
-    location: DEFAULT_LOCATION,
+    description: "",
+    location: "",
   };
 }
 
@@ -349,10 +338,8 @@ export function buildRoomDetailsViewModel(
 
   return {
     title: room.title || "Deluxe Ocean View Suite",
-    location: room.location?.trim() || DEFAULT_LOCATION,
-    rating: 4.9,
-    reviewCount: 124,
-    introHeading: "Experience Your Sanctuary",
+    location: room.location?.trim() ?? "",
+    introHeading: "About this room",
     introParagraphs: getIntroParagraphs(room.description),
     images: getGalleryImages(room),
     amenities,

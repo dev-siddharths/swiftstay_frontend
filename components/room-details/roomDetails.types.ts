@@ -31,8 +31,6 @@ export interface RoomTimeSlot {
 export interface RoomDetailsViewModel {
   title: string;
   location: string;
-  rating: number;
-  reviewCount: number;
   introHeading: string;
   introParagraphs: string[];
   images: RoomImage[];

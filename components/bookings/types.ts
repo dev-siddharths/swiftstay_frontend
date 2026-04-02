@@ -1,7 +1,19 @@
-export type BookingStatus = "upcoming" | "completed" | "cancelled";
+export type BookingStatus =
+  | "upcoming"
+  | "ongoing"
+  | "completed"
+  | "cancelled";
+
+export type BookingFilterStatus =
+  | "all"
+  | "upcoming"
+  | "ongoing"
+  | "completed"
+  | "cancelled";
 
 export type BookingRecord = {
   id: string;
+  bookingId: number;
   title: string;
   location: string;
   imageSrc?: string;

@@ -4,6 +4,8 @@ import type { BookingRecord } from "./types";
 
 type BookingCardProps = {
   booking: BookingRecord;
+  onCancelReservation?: (booking: BookingRecord) => void;
+  isCancelling?: boolean;
 };
 
 const STATUS_STYLES = {
@@ -15,6 +17,15 @@ const STATUS_STYLES = {
     border: "border-outline-variant/20",
     statusText: "text-primary",
     icon: "schedule",
+  },
+  ongoing: {
+    badge: "bg-tertiary text-on-tertiary",
+    card: "bg-surface-container-lowest shadow-[0_18px_40px_rgba(0,98,143,0.12)]",
+    title: "text-on-surface",
+    meta: "text-on-surface-variant",
+    border: "border-tertiary/15",
+    statusText: "text-tertiary",
+    icon: "hourglass_top",
   },
   completed: {
     badge: "bg-secondary text-on-secondary",
@@ -44,22 +55,26 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
-export default function BookingCard({ booking }: BookingCardProps) {
+export default function BookingCard({
+  booking,
+  onCancelReservation,
+  isCancelling = false,
+}: BookingCardProps) {
   const styles = STATUS_STYLES[booking.status];
 
   return (
     <article
-      className={`group overflow-hidden rounded-[28px] border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(27,28,28,0.08)] ${styles.card} ${styles.border}`}
+      className={`group overflow-hidden rounded-[22px] border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(27,28,28,0.08)] ${styles.card} ${styles.border}`}
     >
       <div className="flex flex-col md:flex-row">
-        <div className="relative h-56 w-full overflow-hidden md:h-auto md:w-80">
+        <div className="relative h-48 w-full overflow-hidden md:h-auto md:w-[240px] lg:w-[260px]">
           {booking.imageSrc ? (
             <>
               <Image
                 src={booking.imageSrc}
                 alt={booking.title}
                 fill
-                sizes="(min-width: 768px) 320px, 100vw"
+                sizes="(min-width: 1280px) 260px, (min-width: 768px) 240px, 100vw"
                 className={`object-cover transition-transform duration-700 group-hover:scale-105 ${
                   booking.status === "completed" ? "grayscale-[35%]" : ""
                 }`}
@@ -74,26 +89,26 @@ export default function BookingCard({ booking }: BookingCardProps) {
             </div>
           )}
 
-          <div className="absolute left-5 top-5">
+          <div className="absolute left-4 top-4">
             <span
-              className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] ${styles.badge}`}
+              className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] shadow-sm ${styles.badge}`}
             >
               {booking.status}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col justify-between p-7 md:p-8">
+        <div className="flex flex-1 flex-col justify-between p-4 md:p-5 lg:p-5.5">
           <div>
-            <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
-                <div className="mb-2 inline-flex rounded-full bg-surface-container px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant">
+                <div className="mb-2 inline-flex rounded-full bg-surface-container px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant">
                   {booking.id}
                 </div>
-                <h2 className={`font-headline text-2xl font-extrabold ${styles.title}`}>
+                <h2 className={`font-headline text-[1.5rem] font-extrabold leading-tight ${styles.title}`}>
                   {booking.title}
                 </h2>
-                <p className={`mt-2 flex items-center gap-2 text-sm font-medium ${styles.meta}`}>
+                <p className={`mt-1.5 flex items-center gap-1.5 text-[13px] font-medium ${styles.meta}`}>
                   <span className="material-symbols-outlined text-base">
                     location_on
                   </span>
@@ -102,50 +117,60 @@ export default function BookingCard({ booking }: BookingCardProps) {
               </div>
 
               <div className="shrink-0 md:text-right">
-                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-on-surface-variant/60">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/60">
                   Total Price
                 </p>
-                <p className="mt-2 font-headline text-3xl font-extrabold tracking-tight text-primary">
+                <p className="mt-1.5 font-headline text-[1.7rem] font-extrabold tracking-tight text-primary">
                   {formatPrice(booking.totalPrice)}
                 </p>
               </div>
             </div>
 
-            <div className="mt-7 grid gap-4 rounded-[24px] border border-outline-variant/15 bg-surface/60 p-5 md:grid-cols-3">
+            <div className="mt-5 grid gap-3 rounded-[18px] border border-outline-variant/15 bg-surface/60 p-3.5 md:grid-cols-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant/60">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/60">
                   Stay Dates
                 </p>
-                <p className="mt-2 text-sm font-bold text-on-surface">
+                <p className="mt-1.5 text-[14px] font-semibold text-on-surface">
                   {booking.dateLabel}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant/60">
-                  Timeline
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/60">
+                  Check In Time
                 </p>
-                <p className="mt-2 text-sm font-bold text-on-surface">
+                <p className="mt-1.5 text-[14px] font-semibold text-on-surface">
                   {booking.timeLabel}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant/60">
-                  Guests
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant/60">
+                  Slot
                 </p>
-                <p className="mt-2 text-sm font-bold text-on-surface">
+                <p className="mt-1.5 text-[14px] font-semibold text-on-surface">
                   {booking.guestLabel}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-7 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className={`flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] ${styles.statusText}`}>
-              <span className="material-symbols-outlined text-xl">{styles.icon}</span>
+          <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] ${styles.statusText}`}>
+              <span className="material-symbols-outlined text-lg">{styles.icon}</span>
               Status: {booking.status}
             </div>
 
             <div className="flex flex-wrap gap-3">
+              {booking.status === "upcoming" ? (
+                <button
+                  type="button"
+                  onClick={() => onCancelReservation?.(booking)}
+                  disabled={isCancelling}
+                  className="rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isCancelling ? "Cancelling..." : "Cancel Reservation"}
+                </button>
+              ) : null}
               {booking.secondaryActionLabel ? (
                 <button
                   type="button"

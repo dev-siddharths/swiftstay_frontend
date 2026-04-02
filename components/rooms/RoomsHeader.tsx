@@ -23,7 +23,7 @@ export default function RoomsHeader({ userData, logout }: Props) {
 
   return (
     <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-sm">
-      <div className="flex justify-between items-center px-6 py-4 w-full max-w-7xl mx-auto">
+      <div className="flex justify-between items-center px-6 py-3 w-full max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
           <Link
             href="/rooms"
