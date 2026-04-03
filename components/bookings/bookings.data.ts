@@ -24,6 +24,7 @@ export const BOOKING_STATUS_FILTER_OPTIONS: Array<{
 export const BOOKING_MOCK_DATA: BookingRecord[] = [
   {
     id: "BK-4021",
+    bookingId: 4021,
     title: "The Azure Executive Suite",
     location: "Santorini, Greece",
     imageSrc:
@@ -39,6 +40,7 @@ export const BOOKING_MOCK_DATA: BookingRecord[] = [
   },
   {
     id: "BK-4078",
+    bookingId: 4078,
     title: "Emerald Coast Residence",
     location: "Goa, India",
     imageSrc:
@@ -55,6 +57,7 @@ export const BOOKING_MOCK_DATA: BookingRecord[] = [
   },
   {
     id: "BK-3812",
+    bookingId: 3812,
     title: "Aspen Ridge Cabin",
     location: "Aspen, Colorado",
     imageSrc:
@@ -71,6 +74,7 @@ export const BOOKING_MOCK_DATA: BookingRecord[] = [
   },
   {
     id: "BK-3764",
+    bookingId: 3764,
     title: "Urban Loft Studio",
     location: "Berlin, Germany",
     status: "cancelled",
