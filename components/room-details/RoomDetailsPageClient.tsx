@@ -19,6 +19,9 @@ type RoomDetailsResponse = {
     room_name?: string;
     room_price?: number;
     room_description?: string;
+    location?: string;
+    room_location?: string;
+    Room_Location?: string;
     amenities?: Array<
       | string
       | { name?: string | null; Icon_Url?: string | null }
@@ -28,6 +31,20 @@ type RoomDetailsResponse = {
   };
   message?: string;
 };
+
+function getRoomLocation(payload?: RoomDetailsResponse["data"]) {
+  const locationCandidates = [
+    payload?.location,
+    payload?.room_location,
+    payload?.Room_Location,
+  ];
+
+  return (
+    locationCandidates.find(
+      (value): value is string => typeof value === "string" && value.trim().length > 0,
+    )?.trim() ?? ""
+  );
+}
 
 function mapRoomPayload(
   roomId: string,
@@ -80,7 +97,7 @@ function mapRoomPayload(
     image_urls: images,
     description: payload.room_description ?? "",
     amenities,
-    location: "",
+    location: getRoomLocation(payload),
   };
 }
 
