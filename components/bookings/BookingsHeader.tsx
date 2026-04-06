@@ -49,12 +49,6 @@ export default function BookingsHeader({
           >
             Bookings
           </Link>
-          <Link
-            href="/rooms"
-            className="text-on-surface font-semibold text-sm hover:opacity-80 transition-opacity"
-          >
-            Favorites
-          </Link>
         </nav>
 
         <div className="flex items-center gap-4">

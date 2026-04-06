@@ -21,6 +21,7 @@ import {
 } from "./roomDetails.data";
 import RoomDetailsGallery from "./RoomDetailsGallery";
 import RoomDetailsOverview from "./RoomDetailsOverview";
+import { buildApiUrl } from "@/lib/api";
 
 type RoomDetailsScreenProps = {
   room: RoomDetailsInput;
@@ -80,7 +81,7 @@ export default function RoomDetailsScreen({
         }
 
         const response = await axios.post<SlotsResponse>(
-          `${process.env.NEXT_PUBLIC_API_URL}/room/getSlot`,
+          buildApiUrl("/room/getSlot"),
           {
             id: room.id,
             date: formatApiDate(selectedDate),
@@ -174,7 +175,7 @@ export default function RoomDetailsScreen({
       };
 
       const response = await axios.post<BookingResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking/createBooking`,
+        buildApiUrl("/booking/createBooking"),
         payload,
         {
           headers: {

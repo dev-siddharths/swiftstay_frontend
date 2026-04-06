@@ -91,7 +91,6 @@ export const ROOM_DETAILS_HEADER_ITEMS = [
 
 export const ROOM_DETAILS_BOTTOM_NAV_ITEMS = [
   { label: "Explore", icon: "search", href: "/rooms" },
-  { label: "Saved", icon: "favorite" },
   { label: "Bookings", icon: "calendar_today", active: true },
   { label: "Profile", icon: "person" },
 ];

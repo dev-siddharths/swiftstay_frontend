@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import HomePageLogo from "@/public/login/HomeLogo.png";
+import { buildApiUrl } from "@/lib/api";
 
 type FormData = {
   email: string;
@@ -91,7 +92,7 @@ export default function Login() {
       }
 
       try {
-        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        await axios.get(buildApiUrl("/auth/me"), {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -116,10 +117,7 @@ export default function Login() {
   const onSubmit = async (data: FormData): Promise<void> => {
     try {
       setIsSubmitting(true);
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/login`,
-        data,
-      );
+      const res = await axios.post(buildApiUrl("/login"), data);
 
       localStorage.setItem("token", res.data.token);
       router.push("/rooms");

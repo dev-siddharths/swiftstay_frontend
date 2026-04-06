@@ -12,6 +12,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { buildApiUrl } from "@/lib/api";
 
 type SignupFormValues = {
   fullName: string;
@@ -225,7 +226,7 @@ export default function SignupCard() {
       };
       console.log(data);
       const res = await axios.post<SignupApiResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/signup`,
+        buildApiUrl("/signup"),
         payload,
       );
       const { success, message } = res.data;

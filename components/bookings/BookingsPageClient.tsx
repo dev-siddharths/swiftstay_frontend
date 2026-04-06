@@ -4,6 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { buildApiUrl } from "@/lib/api";
 
 import useAuth from "@/hooks/useAuth";
 import Pagination from "../shared/Pagination";
@@ -31,12 +32,14 @@ type GetBookingApiRecord = {
   Booking_Date: string;
   StartTime: string;
   EndTime: string;
-  status: BookingStatus;
+  status?: string;
 };
 
 type GetBookingApiResponse = {
   success?: boolean;
   data?: GetBookingApiRecord[];
+  cancelled_bookings?: GetBookingApiRecord[];
+  cancelled_booking?: GetBookingApiRecord[];
   message?: string;
 };
 
@@ -142,6 +145,9 @@ function mapBookingRecord(booking: GetBookingApiRecord): BookingRecord {
   const bookingDateTime =
     parseBookingDateTime(booking.Booking_Date, booking.StartTime) ??
     new Date(booking.Booking_Date);
+  const mappedStatus = booking.status
+    ? (booking.status.toLowerCase() as BookingStatus)
+    : getBookingStatus(booking);
 
   return {
     id: `BK-${String(booking.Booking_Id).padStart(4, "0")}`,
@@ -149,7 +155,7 @@ function mapBookingRecord(booking: GetBookingApiRecord): BookingRecord {
     title: booking.Room_Name,
     location: booking.Room_Location,
     imageSrc: booking.Room_Img,
-    status: booking.status.toLowerCase() as BookingStatus,
+    status: mappedStatus,
     totalPrice: booking.Final_Price,
     dateLabel: formatDateLabel(booking.Booking_Date),
     timeLabel: formatTimeLabel(booking.StartTime),
@@ -276,7 +282,7 @@ export default function BookingsPageClient() {
         }
 
         const response = await axios.get<GetBookingApiResponse>(
-          `${process.env.NEXT_PUBLIC_API_URL}/booking/getBooking`,
+          buildApiUrl("/booking/getBooking"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -297,8 +303,18 @@ export default function BookingsPageClient() {
         const nextBookings = (response.data?.data ?? [])
           .map(mapBookingRecord)
           .sort(sortBookings);
+        const cancelledBookings = (
+          response.data?.cancelled_bookings ??
+          response.data?.cancelled_booking ??
+          []
+        ).map((booking) =>
+          mapBookingRecord({
+            ...booking,
+            status: "cancelled",
+          }),
+        );
 
-        setBookings(nextBookings);
+        setBookings([...nextBookings, ...cancelledBookings].sort(sortBookings));
       } catch (error) {
         if (ignore) {
           return;
@@ -365,7 +381,7 @@ export default function BookingsPageClient() {
 
     try {
       const response = await axios.post<DeleteBookingResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking/deleteBooking`,
+        buildApiUrl("/booking/deleteBooking"),
         {
           booking_id: bookingToCancel.bookingId,
         },

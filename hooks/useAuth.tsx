@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { buildApiUrl } from "@/lib/api";
 
 const useAuth = () => {
   type AuthMeResponse = {
@@ -36,7 +37,7 @@ const useAuth = () => {
       } else {
         try {
           const res = await axios.get<AuthMeResponse>(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+            buildApiUrl("/auth/me"),
             {
               headers: {
                 Authorization: `Bearer ${tokenfromLocal}`,

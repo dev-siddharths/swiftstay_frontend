@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import RoomsHeader from "@/components/rooms/RoomsHeader";
 import useAuth from "@/hooks/useAuth";
+import { buildApiUrl } from "@/lib/api";
 import type { RoomDetailsInput } from "./roomDetails.types";
 import RoomDetailsScreen from "./RoomDetailsScreen";
 import RoomDetailsSkeleton from "./RoomDetailsSkeleton";
@@ -133,7 +134,7 @@ export default function RoomDetailsPageClient({
         }
 
         const response = await axios.get<RoomDetailsResponse>(
-          `${process.env.NEXT_PUBLIC_API_URL}/room/${roomId}`,
+          buildApiUrl(`/room/${roomId}`),
           {
             headers: {
               Authorization: `Bearer ${token}`,

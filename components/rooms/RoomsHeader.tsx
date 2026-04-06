@@ -42,12 +42,6 @@ export default function RoomsHeader({ userData, logout }: Props) {
           >
             Bookings
           </Link>
-          <Link
-            className="text-on-surface font-semibold text-sm hover:opacity-80 transition-opacity"
-            href="/rooms"
-          >
-            Favorites
-          </Link>
         </nav>
         <div className="flex items-center gap-4">
           {/* <button

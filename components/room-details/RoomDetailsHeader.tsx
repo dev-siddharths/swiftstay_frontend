@@ -58,13 +58,6 @@ export default function RoomDetailsHeader({
           </button>
           <button
             type="button"
-            aria-label="Favorites"
-            className="material-symbols-outlined p-2 text-on-surface opacity-70 scale-95 active:scale-90 transition-transform"
-          >
-            favorite
-          </button>
-          <button
-            type="button"
             aria-label={userName ? `${userName} profile avatar` : "Profile avatar"}
             className="w-10 h-10 rounded-full bg-surface-container overflow-hidden"
             title={userName}

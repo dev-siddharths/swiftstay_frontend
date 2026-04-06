@@ -8,6 +8,7 @@ import RoomsGrid from "@/components/rooms/RoomsGrid";
 import RoomsHeader from "@/components/rooms/RoomsHeader";
 import type { Room } from "@/components/rooms/types";
 import useAuth from "@/hooks/useAuth";
+import { buildApiUrl } from "@/lib/api";
 
 const ROOMS_PER_PAGE = 6;
 
@@ -26,7 +27,7 @@ export default function RoomsPage() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/room/getRooms`,
+          buildApiUrl("/room/getRooms"),
           { headers: { Authorization: `Bearer ${token}` } },
         );
         // console.log(res.data.data);
