@@ -29,7 +29,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
+stitch_swiftstay_welcome
+stitch_swiftstay_roomDetails
+stitch_swiftstay_signup
 # env files (can opt-in for committing if needed)
 .env*
 
