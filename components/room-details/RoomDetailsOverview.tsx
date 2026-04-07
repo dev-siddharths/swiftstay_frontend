@@ -16,8 +16,8 @@ export default function RoomDetailsOverview({
 
   return (
     <>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-on-surface tracking-tight leading-normal mb-4">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-on-surface tracking-tight leading-normal mb-3">
           {title}
         </h1>
         {hasLocation ? (
@@ -32,11 +32,11 @@ export default function RoomDetailsOverview({
         ) : null}
       </div>
 
-      {hasIntro ? <div className="h-px bg-outline-variant/15 w-full mb-10" /> : null}
+      {hasIntro ? <div className="h-px bg-outline-variant/15 w-full mb-6" /> : null}
 
       {hasIntro ? (
         <section className="mb-12">
-          <h2 className="text-xl font-semibold leading-normal mb-6">
+          <h2 className="text-xl font-semibold leading-normal mb-4">
             {introHeading}
           </h2>
           {introParagraphs.map((paragraph, index) => (
