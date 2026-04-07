@@ -5,7 +5,6 @@ import Link from "next/link";
 const NAV_ITEMS = [
   { href: "/rooms", icon: "home", label: "Home" },
   { href: "/bookings", icon: "event_note", label: "Bookings", active: true },
-  { icon: "person", label: "Profile" },
 ];
 
 export default function BookingsBottomNav() {
@@ -25,23 +24,10 @@ export default function BookingsBottomNav() {
           </>
         );
 
-        if (item.href) {
-          return (
-            <Link key={item.label} href={item.href} className={className}>
-              {content}
-            </Link>
-          );
-        }
-
         return (
-          <button
-            key={item.label}
-            type="button"
-            className={`${className} cursor-default`}
-            aria-disabled="true"
-          >
+          <Link key={item.label} href={item.href} className={className}>
             {content}
-          </button>
+          </Link>
         );
       })}
     </nav>

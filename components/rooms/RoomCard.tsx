@@ -75,7 +75,7 @@ export default function RoomCard({ room }: RoomCardProps) {
         <div className="flex items-end justify-between border-t border-surface-container-high pt-3">
           <div className="flex flex-col gap-0.5">
             <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/75">
-              Per night
+              Per slot
             </span>
             <span className="font-headline text-[1.05rem] font-bold text-primary">
               {formatPrice(room.price)}

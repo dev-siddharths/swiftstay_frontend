@@ -92,7 +92,6 @@ export const ROOM_DETAILS_HEADER_ITEMS = [
 export const ROOM_DETAILS_BOTTOM_NAV_ITEMS = [
   { label: "Home", icon: "home", href: "/rooms", active: true },
   { label: "Bookings", icon: "event_note", href: "/bookings" },
-  { label: "Profile", icon: "person" },
 ];
 
 function getIntroParagraphs(description?: string): string[] {

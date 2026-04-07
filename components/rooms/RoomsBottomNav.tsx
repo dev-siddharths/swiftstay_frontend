@@ -21,15 +21,6 @@ export default function RoomsBottomNav() {
           Bookings
         </span>
       </Link>
-      <Link
-        className="flex flex-col items-center justify-center text-on-surface/60 px-4 py-2 transition-all duration-200"
-        href="/rooms"
-      >
-        <span className="material-symbols-outlined">person</span>
-        <span className="font-body text-[10px] font-semibold uppercase tracking-widest mt-1">
-          Profile
-        </span>
-      </Link>
     </nav>
   );
 }
