@@ -90,8 +90,8 @@ export const ROOM_DETAILS_HEADER_ITEMS = [
 ];
 
 export const ROOM_DETAILS_BOTTOM_NAV_ITEMS = [
-  { label: "Explore", icon: "search", href: "/rooms" },
-  { label: "Bookings", icon: "calendar_today", active: true },
+  { label: "Home", icon: "home", href: "/rooms", active: true },
+  { label: "Bookings", icon: "event_note", href: "/bookings" },
   { label: "Profile", icon: "person" },
 ];
 

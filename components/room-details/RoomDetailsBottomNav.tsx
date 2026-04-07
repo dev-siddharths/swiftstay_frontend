@@ -1,13 +1,7 @@
 import Link from "next/link";
 import { ROOM_DETAILS_BOTTOM_NAV_ITEMS } from "./roomDetails.data";
 
-type RoomDetailsBottomNavProps = {
-  roomId: string;
-};
-
-export default function RoomDetailsBottomNav({
-  roomId,
-}: RoomDetailsBottomNavProps) {
+export default function RoomDetailsBottomNav() {
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 bg-surface/90 backdrop-blur-lg z-50 shadow-[0_-8px_32px_0_rgba(27,28,28,0.12)]"
@@ -36,14 +30,14 @@ export default function RoomDetailsBottomNav({
         }
 
         return (
-          <Link
+          <button
             key={item.label}
-            href={`/rooms/${roomId}`}
-            className={className}
-            aria-current={item.active ? "page" : undefined}
+            type="button"
+            className={`${className} cursor-default`}
+            aria-disabled="true"
           >
             {content}
-          </Link>
+          </button>
         );
       })}
     </nav>

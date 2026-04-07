@@ -277,7 +277,7 @@ export default function RoomDetailsScreen({
         </div>
       </main>
 
-      <RoomDetailsBottomNav roomId={String(room.id)} />
+      <RoomDetailsBottomNav />
     </>
   );
 }

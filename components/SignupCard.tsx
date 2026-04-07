@@ -224,7 +224,7 @@ export default function SignupCard() {
         email: data.email,
         password: data.password,
       };
-      console.log(data);
+      // console.log(data);
       const res = await axios.post<SignupApiResponse>(
         buildApiUrl("/signup"),
         payload,

@@ -44,7 +44,7 @@ const useAuth = () => {
               },
             },
           );
-          console.log(res.data);
+          // console.log(res.data);
           if (mounted) {
             setUserData(res.data);
           }
