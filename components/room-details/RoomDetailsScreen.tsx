@@ -25,7 +25,6 @@ import { buildApiUrl } from "@/lib/api";
 
 type RoomDetailsScreenProps = {
   room: RoomDetailsInput;
-  userId: number;
 };
 
 type SlotsResponse = {
@@ -45,7 +44,6 @@ type BookingResponse = {
 
 export default function RoomDetailsScreen({
   room,
-  userId,
 }: RoomDetailsScreenProps) {
   const details = buildRoomDetailsViewModel(room);
   const [today] = useState(() => new Date());
@@ -167,7 +165,6 @@ export default function RoomDetailsScreen({
 
     try {
       const payload = {
-        user_id: userId,
         roomId: room.id,
         slotId: selectedSlot.slotId,
         date: formatApiDate(selectedDate),
