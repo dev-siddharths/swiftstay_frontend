@@ -79,7 +79,7 @@ export default function RoomDetailsScreen({
         }
 
         const response = await axios.post<SlotsResponse>(
-          buildApiUrl("/room/getSlot"),
+          buildApiUrl("/rooms/slots"),
           {
             id: room.id,
             date: formatApiDate(selectedDate),
@@ -172,7 +172,7 @@ export default function RoomDetailsScreen({
       };
 
       const response = await axios.post<BookingResponse>(
-        buildApiUrl("/booking/createBooking"),
+        buildApiUrl("/bookings"),
         payload,
         {
           headers: {

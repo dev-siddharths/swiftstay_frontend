@@ -8,6 +8,7 @@ type RoomsGridProps = {
   onPageChange: (page: number) => void;
   totalPages: number;
   totalRooms: number;
+  errorMessage?: string | null;
 };
 
 export default function RoomsGrid({
@@ -16,6 +17,7 @@ export default function RoomsGrid({
   onPageChange,
   totalPages,
   totalRooms,
+  errorMessage,
 }: RoomsGridProps) {
   return (
     <>
@@ -24,19 +26,33 @@ export default function RoomsGrid({
           All Available Rooms
         </h2>
       </div>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {rooms.map((room) => (
-          <RoomCard key={room.id} room={room} />
-        ))}
-      </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-        itemLabel="rooms"
-        totalItems={totalRooms}
-        className="mt-5"
-      />
+      {rooms.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {rooms.map((room) => (
+              <RoomCard key={room.id} room={room} />
+            ))}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            itemLabel="rooms"
+            totalItems={totalRooms}
+            className="mt-5"
+          />
+        </>
+      ) : (
+        <div className="rounded-[20px] border border-outline-variant/20 bg-surface-container-lowest px-5 py-10 text-center shadow-[0_12px_28px_rgba(27,28,28,0.04)]">
+          <h3 className="font-headline text-[1.2rem] font-extrabold text-on-surface">
+            No rooms found
+          </h3>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-on-surface-variant">
+            {errorMessage ??
+              "There are no rooms available right now. Please check back later."}
+          </p>
+        </div>
+      )}
     </>
   );
 }

@@ -14,6 +14,7 @@ const ROOMS_PER_PAGE = 6;
 
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [roomsError, setRoomsError] = useState<string | null>(null);
   const [requestedPage, setRequestedPage] = useState(1);
   const { userData, logout, isCheckingAuth } = useAuth();
   const firstName = userData?.naam?.trim().split(/\s+/)[0] ?? "Guest";
@@ -26,15 +27,21 @@ export default function RoomsPage() {
     async function fetchRooms() {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          buildApiUrl("/room/getRooms"),
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const res = await axios.get(buildApiUrl("/rooms"), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         // console.log(res.data.data);
 
-        setRooms(res.data.data); // assuming { success, data }
+        setRooms(Array.isArray(res.data.data) ? res.data.data : []);
+        setRoomsError(res.data.success ? null : res.data.message ?? "No rooms found");
       } catch (err) {
         console.error(err);
+        setRooms([]);
+        setRoomsError(
+          axios.isAxiosError(err)
+            ? (err.response?.data?.message ?? "Failed to load rooms")
+            : "Failed to load rooms",
+        );
       }
     }
 
@@ -79,6 +86,7 @@ export default function RoomsPage() {
           onPageChange={setRequestedPage}
           totalPages={totalPages}
           totalRooms={rooms.length}
+          errorMessage={roomsError}
         />
       </main>
       <RoomsBottomNav />

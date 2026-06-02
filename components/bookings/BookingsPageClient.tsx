@@ -282,7 +282,7 @@ export default function BookingsPageClient() {
         }
 
         const response = await axios.get<GetBookingApiResponse>(
-          buildApiUrl("/booking/getBooking"),
+          buildApiUrl("/bookings"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -380,11 +380,8 @@ export default function BookingsPageClient() {
     setIsCancellingBooking(true);
 
     try {
-      const response = await axios.post<DeleteBookingResponse>(
-        buildApiUrl("/booking/deleteBooking"),
-        {
-          booking_id: bookingToCancel.bookingId,
-        },
+      const response = await axios.delete<DeleteBookingResponse>(
+        buildApiUrl(`/bookings/${bookingToCancel.bookingId}`),
         {
           headers: {
             Authorization: `Bearer ${token}`,

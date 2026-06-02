@@ -134,7 +134,7 @@ export default function RoomDetailsPageClient({
         }
 
         const response = await axios.get<RoomDetailsResponse>(
-          buildApiUrl(`/room/${roomId}`),
+          buildApiUrl(`/rooms/${roomId}`),
           {
             headers: {
               Authorization: `Bearer ${token}`,
