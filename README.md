@@ -83,7 +83,9 @@ The app runs on `http://localhost:4001`.
 - `POST /login`
 - `POST /signup`
 - `GET /auth/me`
-- `GET /room/getRooms`
-- `GET /room/:id`
-- `GET /booking/getBooking`
-- `POST /booking/deleteBooking`
+- `GET /rooms`
+- `GET /rooms/:id`
+- `POST /rooms/slots`
+- `POST /bookings`
+- `GET /bookings`
+- `DELETE /bookings/:id`

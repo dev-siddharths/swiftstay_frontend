@@ -134,7 +134,7 @@ export default function RoomDetailsPageClient({
         }
 
         const response = await axios.get<RoomDetailsResponse>(
-          buildApiUrl(`/room/${roomId}`),
+          buildApiUrl(`/rooms/${roomId}`),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -205,7 +205,7 @@ export default function RoomDetailsPageClient({
         </main>
       ) : null}
       {!errorMessage && room ? (
-        <RoomDetailsScreen room={room} userId={userData.id} />
+        <RoomDetailsScreen room={room} />
       ) : null}
     </div>
   );
