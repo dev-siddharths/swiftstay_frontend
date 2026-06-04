@@ -14,6 +14,7 @@ import {
   buildRoomDetailsViewModel,
   formatApiDate,
   formatBookingDate,
+  formatCurrency,
   formatMonthLabel,
   getInitialSelectedDate,
   getBookingBreakdown,
@@ -61,6 +62,7 @@ export default function RoomDetailsScreen({
   const [isLoadingSlots, setIsLoadingSlots] = useState(true);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [isBooking, setIsBooking] = useState(false);
+  const [showBookingConfirm, setShowBookingConfirm] = useState(false);
 
   const fetchSlots = useCallback(
     async (shouldIgnore?: () => boolean) => {
@@ -148,9 +150,16 @@ export default function RoomDetailsScreen({
   const isBookDisabled =
     isLoadingSlots || isBooking || !selectedSlot || !selectedSlot.slotId;
 
-  const handleBookNow = async () => {
+  const handleBookNow = () => {
     if (!selectedSlot?.slotId) {
       toast.error("Please select an available slot");
+      return;
+    }
+    setShowBookingConfirm(true);
+  };
+
+  const confirmBooking = async () => {
+    if (!selectedSlot?.slotId) {
       return;
     }
 
@@ -158,6 +167,7 @@ export default function RoomDetailsScreen({
 
     if (!token) {
       toast.error("Please login again to continue");
+      setShowBookingConfirm(false);
       return;
     }
 
@@ -183,6 +193,7 @@ export default function RoomDetailsScreen({
 
       if (response.data?.success) {
         toast.success(response.data.message ?? "Booking successful");
+        setShowBookingConfirm(false);
         return;
       }
 
@@ -196,6 +207,7 @@ export default function RoomDetailsScreen({
     } finally {
       await fetchSlots();
       setIsBooking(false);
+      setShowBookingConfirm(false);
     }
   };
 
@@ -273,6 +285,90 @@ export default function RoomDetailsScreen({
           </aside>
         </div>
       </main>
+
+      {showBookingConfirm ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/45 px-4">
+          <div className="w-full max-w-md rounded-[24px] border border-outline-variant/15 bg-surface-container-lowest p-6 shadow-[0_24px_70px_rgba(0,0,0,0.2)]">
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
+              Confirm Reservation
+            </p>
+            <h2 className="mt-3 font-headline text-[1.5rem] font-extrabold tracking-tight text-on-surface">
+              Ready to book this room?
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-on-surface-variant">
+              Please review your booking details before confirming.
+            </p>
+
+            <div className="mt-5 space-y-3 rounded-xl bg-surface-container-low border border-outline-variant/10 p-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">Room</span>
+                <span className="font-semibold text-on-surface">
+                  {details.title}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">Date</span>
+                <span className="font-semibold text-on-surface">
+                  {formatBookingDate(selectedDate)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">Time Slot</span>
+                <span className="font-semibold text-on-surface">
+                  {selectedSlot?.time ?? "—"}
+                </span>
+              </div>
+              <div className="h-px bg-outline-variant/15 w-full" />
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">
+                  1 Slot x {formatCurrency(selectedSlot?.price ?? details.basePrice)}
+                </span>
+                <span className="font-medium text-on-surface">
+                  {formatCurrency(selectedSlot?.price ?? details.basePrice)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">Service Fee</span>
+                <span className="font-medium text-on-surface">
+                  {formatCurrency(booking.serviceFee)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">Occupancy Taxes</span>
+                <span className="font-medium text-on-surface">
+                  {formatCurrency(booking.occupancyTaxes)}
+                </span>
+              </div>
+              <div className="h-px bg-outline-variant/15 w-full" />
+              <div className="flex justify-between items-baseline">
+                <span className="text-sm font-semibold text-on-surface">Total</span>
+                <span className="text-lg font-bold text-primary">
+                  {formatCurrency(booking.total)}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setShowBookingConfirm(false)}
+                disabled={isBooking}
+                className="rounded-lg border border-outline-variant/25 px-4 py-2.5 text-sm font-medium text-on-surface transition-colors hover:bg-surface-container-low disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Go Back
+              </button>
+              <button
+                type="button"
+                onClick={() => void confirmBooking()}
+                disabled={isBooking}
+                className="rounded-lg bg-gradient-to-r from-primary to-primary-container px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isBooking ? "Booking..." : "Confirm Booking"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <RoomDetailsBottomNav />
     </>
