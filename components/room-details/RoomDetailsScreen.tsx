@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import RoomAmenities from "./RoomAmenities";
 import RoomBookingSection from "./RoomBookingSection";
@@ -62,7 +62,10 @@ export default function RoomDetailsScreen({
   const [isLoadingSlots, setIsLoadingSlots] = useState(true);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [isBooking, setIsBooking] = useState(false);
+  const [isLocking, setIsLocking] = useState(false);
   const [showBookingConfirm, setShowBookingConfirm] = useState(false);
+  const [lockSecondsLeft, setLockSecondsLeft] = useState(60);
+  const lockTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchSlots = useCallback(
     async (shouldIgnore?: () => boolean) => {
@@ -148,15 +151,108 @@ export default function RoomDetailsScreen({
     null;
   const booking = getBookingBreakdown(selectedSlot?.price ?? details.basePrice);
   const isBookDisabled =
-    isLoadingSlots || isBooking || !selectedSlot || !selectedSlot.slotId;
+    isLoadingSlots || isBooking || isLocking || !selectedSlot || !selectedSlot.slotId;
 
-  const handleBookNow = () => {
+  const handleBookNow = async () => {
     if (!selectedSlot?.slotId) {
       toast.error("Please select an available slot");
       return;
     }
-    setShowBookingConfirm(true);
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("Please login again to continue");
+      return;
+    }
+
+    setIsLocking(true);
+
+    try {
+      const response = await axios.post<BookingResponse>(
+        buildApiUrl(`/bookings/slots/${selectedSlot.slotId}/lock`),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.data?.success) {
+        setShowBookingConfirm(true);
+      } else {
+        toast.error(response.data?.message ?? "Failed to lock slot");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message ?? "Slot is currently unavailable");
+      } else {
+        toast.error("Failed to lock slot");
+      }
+    } finally {
+      setIsLocking(false);
+    }
   };
+
+  const releaseLock = useCallback(async () => {
+    if (!selectedSlot?.slotId) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      await axios.delete(
+        buildApiUrl(`/bookings/slots/${selectedSlot.slotId}/lock`),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch {
+      // silently fail — lock will expire on the server anyway
+    }
+  }, [selectedSlot?.slotId]);
+
+  const closeModal = useCallback(() => {
+    setShowBookingConfirm(false);
+    if (lockTimerRef.current) {
+      clearInterval(lockTimerRef.current);
+      lockTimerRef.current = null;
+    }
+  }, []);
+
+  const handleGoBack = () => {
+    closeModal();
+    void releaseLock();
+  };
+
+  // Start / stop the 60s countdown when modal opens / closes
+  useEffect(() => {
+    if (!showBookingConfirm) return;
+
+    setLockSecondsLeft(60);
+
+    lockTimerRef.current = setInterval(() => {
+      setLockSecondsLeft((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+
+    return () => {
+      if (lockTimerRef.current) {
+        clearInterval(lockTimerRef.current);
+        lockTimerRef.current = null;
+      }
+    };
+  }, [showBookingConfirm]);
+
+  // When timer hits 0, release lock and close modal
+  useEffect(() => {
+    if (lockSecondsLeft === 0 && showBookingConfirm) {
+      closeModal();
+      void releaseLock();
+    }
+  }, [lockSecondsLeft, showBookingConfirm, closeModal, releaseLock]);
 
   const confirmBooking = async () => {
     if (!selectedSlot?.slotId) {
@@ -167,7 +263,7 @@ export default function RoomDetailsScreen({
 
     if (!token) {
       toast.error("Please login again to continue");
-      setShowBookingConfirm(false);
+      closeModal();
       return;
     }
 
@@ -193,7 +289,8 @@ export default function RoomDetailsScreen({
 
       if (response.data?.success) {
         toast.success(response.data.message ?? "Booking successful");
-        setShowBookingConfirm(false);
+        void releaseLock();
+        closeModal();
         return;
       }
 
@@ -207,7 +304,7 @@ export default function RoomDetailsScreen({
     } finally {
       await fetchSlots();
       setIsBooking(false);
-      setShowBookingConfirm(false);
+      closeModal();
     }
   };
 
@@ -280,6 +377,7 @@ export default function RoomDetailsScreen({
               total={booking.total}
               onBookNow={handleBookNow}
               isBooking={isBooking}
+              isLocking={isLocking}
               isBookDisabled={isBookDisabled}
             />
           </aside>
@@ -289,9 +387,22 @@ export default function RoomDetailsScreen({
       {showBookingConfirm ? (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/45 px-4">
           <div className="w-full max-w-md rounded-[24px] border border-outline-variant/15 bg-surface-container-lowest p-6 shadow-[0_24px_70px_rgba(0,0,0,0.2)]">
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
-              Confirm Reservation
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
+                Confirm Reservation
+              </p>
+              <div
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                  lockSecondsLeft <= 10
+                    ? "bg-red-100 text-red-600"
+                    : "bg-primary/10 text-primary"
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm">timer</span>
+                {Math.floor(lockSecondsLeft / 60)}:
+                {String(lockSecondsLeft % 60).padStart(2, "0")}
+              </div>
+            </div>
             <h2 className="mt-3 font-headline text-[1.5rem] font-extrabold tracking-tight text-on-surface">
               Ready to book this room?
             </h2>
@@ -351,7 +462,7 @@ export default function RoomDetailsScreen({
             <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                onClick={() => setShowBookingConfirm(false)}
+                onClick={handleGoBack}
                 disabled={isBooking}
                 className="rounded-lg border border-outline-variant/25 px-4 py-2.5 text-sm font-medium text-on-surface transition-colors hover:bg-surface-container-low disabled:cursor-not-allowed disabled:opacity-60"
               >
