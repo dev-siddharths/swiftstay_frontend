@@ -246,6 +246,26 @@ export default function RoomDetailsScreen({
     };
   }, [showBookingConfirm]);
 
+  // Release lock if user closes/refreshes the tab while modal is open
+  useEffect(() => {
+    if (!showBookingConfirm || !selectedSlot?.slotId) return;
+
+    const slotId = selectedSlot.slotId;
+    const token = localStorage.getItem("token");
+
+    const handleBeforeUnload = () => {
+      if (!token) return;
+      fetch(buildApiUrl(`/bookings/slots/${slotId}/lock`), {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+        keepalive: true,
+      });
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [showBookingConfirm, selectedSlot?.slotId]);
+
   // When timer hits 0, release lock and close modal
   useEffect(() => {
     if (lockSecondsLeft === 0 && showBookingConfirm) {
